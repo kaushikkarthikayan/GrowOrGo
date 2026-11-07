@@ -1,0 +1,24 @@
+Alex Morgan
+alex.morgan@example.com | London | github.com/alexmorgan-demo
+
+PROFILE
+Recent graduate who enjoys turning messy data into clear dashboards.
+
+EDUCATION
+MSc Data Science, University of Leeds, 2025
+BSc Mathematics, University of Leeds, 2024
+
+EXPERIENCE
+Data Analyst Intern, Brightside Retail, 2024
+- Wrote SQL queries to build weekly sales reports in Excel
+- Cleaned customer data in Python using Pandas
+
+PROJECTS
+- Built a Power BI dashboard with DAX for a public transport dataset
+- Predicted house prices with scikit-learn and Python
+
+SKILLS
+Python, SQL, Excel, Power BI, Tableau, Git, Communication
+
+CERTIFICATIONS
+Microsoft PL-300 Power BI Data Analyst

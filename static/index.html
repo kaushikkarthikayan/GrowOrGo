@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GoOrGrow - apply now or improve first?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='16' height='32' fill='%232747D8'/%3E%3Crect x='16' width='16' height='32' fill='%233F8F3A'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="/" aria-label="GoOrGrow home"><span class="b-go">Go</span><span class="b-or">or</span><span class="b-grow">Grow</span></a>
+  <ol class="steps" aria-label="Progress">
+    <li data-step="1">Your documents</li>
+    <li data-step="2">What you want</li>
+    <li data-step="3">Your matches</li>
+    <li data-step="4">Go or grow</li>
+  </ol>
+  <span class="mode" id="mode" title="How resumes are read"></span>
+  <div class="steps-line" aria-hidden="true"><i></i></div>
+</header>
+<div id="curtain" aria-hidden="true"><span></span></div>
+
+<main id="main">
+
+<!-- ============ 1. UPLOAD ============ -->
+<section class="view" id="v-upload" data-step="1">
+  <div class="doodles" aria-hidden="true">
+    <svg class="doodle d-plane" viewBox="0 0 260 140" style="top:-30px; right:-250px; width:260px">
+      <path id="plane-trail" d="M8 120 C 60 40, 140 140, 200 60 S 250 20, 252 10" stroke-dasharray="4 8"/>
+      <g id="plane"><path d="M0 8 L22 0 L15 18 L11 11 Z M11 11 L22 0" class="fill"/></g>
+    </svg>
+    <svg class="doodle d-star doodle-hit" viewBox="0 0 40 40" style="top:10px; left:-90px; width:46px"><path d="M20 3 L23.5 16.5 L37 20 L23.5 23.5 L20 37 L16.5 23.5 L3 20 L16.5 16.5 Z"/></svg>
+    <svg class="doodle d-squig" viewBox="0 0 90 24" style="top:150px; left:-120px; width:90px"><path d="M3 12 Q 13 2, 23 12 T 43 12 T 63 12 T 85 12"/></svg>
+    <svg class="doodle d-arrow" viewBox="0 0 120 170" style="top:250px; right:-150px; width:110px"><path d="M100 6 C 40 10, 10 50, 40 80 S 90 120, 30 160"/><path d="M30 160 L 44 146 M30 160 L 48 162"/></svg>
+    <svg class="doodle d-sprout doodle-hit" viewBox="0 0 40 70" style="bottom:90px; left:-100px; width:46px"><path d="M20 68 C 20 52, 19 40, 20 22"/><path d="M20 44 C 9 40, 4 31, 6 26 C 15 28, 20 35, 20 44"/><path d="M20 33 C 31 28, 36 19, 34 14 C 25 17, 20 24, 20 33"/></svg>
+  </div>
+  <h1 class="hero">Apply now,<br>or grow first?</h1>
+  <svg id="ink" class="ink" viewBox="0 0 260 14" aria-hidden="true"><path d="M3 9 C 60 3, 120 13, 180 6 S 240 8, 257 5"/></svg>
+  <p class="lede">Upload your resume and we'll compare it with real job ads. You get a straight answer for each role, backed by lines from your own CV.</p>
+
+  <label class="drop" id="drop" tabindex="0">
+    <input type="file" id="files" multiple accept=".pdf,.docx,.png,.jpg,.jpeg,.txt" hidden>
+    <span class="drop-main">Drop your resume here, or <u>choose files</u></span>
+    <span class="drop-sub">PDF, Word or a photo. Add your LinkedIn PDF and certificates too.</span>
+    <svg class="drop-tick" viewBox="0 0 40 30" aria-hidden="true"><path id="drop-tick" d="M4 16 L15 26 L36 4"/></svg>
+    <ul class="file-list" id="file-list"></ul>
+  </label>
+
+  <div class="field">
+    <label for="links">Portfolio or GitHub links <span class="opt">optional</span></label>
+    <input id="links" type="text" placeholder="github.com/yourname, yourportfolio.com">
+    <p class="hint">For LinkedIn, open your profile, choose More, then Save to PDF, and upload that file.</p>
+  </div>
+
+  <div class="field narrow">
+    <label for="grad">Graduation year <span class="opt">optional</span></label>
+    <input id="grad" type="number" min="1980" max="2040" placeholder="2025">
+  </div>
+
+  <button class="btn primary" id="btn-read">Read my documents</button>
+  <p class="err" id="err-upload" role="alert"></p>
+</section>
+
+<!-- ============ 1b. PROFILE REVIEW ============ -->
+<section class="view" id="v-profile" data-step="1" hidden>
+  <h2 class="title">Here's what we found</h2>
+  <p class="lede" id="profile-lede"></p>
+  <div class="warn-box" id="profile-warn" hidden></div>
+
+  <h3 class="sub">Skills</h3>
+  <p class="hint">Tap a skill to remove it if it's wrong. Each one shows the line from your documents that proves it.</p>
+  <ul class="skills" id="skills"></ul>
+
+  <div class="add-row">
+    <input id="add-skill" type="text" placeholder="Add a skill we missed">
+    <button class="btn ghost" id="btn-add-skill">Add</button>
+  </div>
+
+  <details class="more" id="profile-more">
+    <summary>Education, experience and projects we read</summary>
+    <div id="profile-detail"></div>
+  </details>
+
+  <div class="actions">
+    <button class="btn ghost" data-back="v-upload">Back</button>
+    <button class="btn primary" id="btn-confirm">This looks right</button>
+  </div>
+  <p class="err" id="err-profile" role="alert"></p>
+</section>
+
+<!-- ============ 2. PREFERENCES ============ -->
+<section class="view" id="v-prefs" data-step="2" hidden>
+  <h2 class="title">What are you looking for?</h2>
+  <p class="lede">We've filled in what fits your skills. Change anything.</p>
+
+  <div class="field">
+    <span class="label">Job field <span class="opt">pick up to 5</span></span>
+    <div class="chips" id="field-chips"></div>
+    <div class="add-row"><input id="field-custom" type="text" placeholder="Another job title"><button class="btn ghost" id="btn-field-add">Add</button></div>
+    <label class="switch"><input type="checkbox" id="explore" checked><span class="knob" aria-hidden="true"></span>
+      <span>Also show other roles that fit my skills<small id="explore-hint"></small></span></label>
+  </div>
+
+  <div class="grid2">
+    <div class="field">
+      <label for="country">Country</label>
+      <select id="country"></select>
+    </div>
+    <div class="field">
+      <span class="label">How you want to work</span>
+      <div class="seg" id="workmode" role="radiogroup">
+        <button role="radio" data-v="any" aria-checked="true">Any</button>
+        <button role="radio" data-v="remote">Remote</button>
+        <button role="radio" data-v="hybrid">Hybrid</button>
+        <button role="radio" data-v="onsite">Office</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="cities">Cities <span class="opt">leave empty for anywhere</span></label>
+    <input id="cities" type="text" placeholder="London, Manchester">
+  </div>
+
+  <div class="grid2">
+    <div class="field">
+      <label for="sal-target">Salary you're aiming for <span class="opt" id="cur1"></span></label>
+      <input id="sal-target" type="number" min="0" step="1000" placeholder="32000">
+    </div>
+    <div class="field">
+      <label for="sal-min">Lowest you'd accept <span class="opt" id="cur2"></span></label>
+      <input id="sal-min" type="number" min="0" step="1000" placeholder="26000">
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="field">
+      <label for="co-like">Companies you like <span class="opt">optional</span></label>
+      <input id="co-like" type="text" placeholder="Monzo, NHS Digital">
+    </div>
+    <div class="field">
+      <label for="co-avoid">Companies to skip <span class="opt">optional</span></label>
+      <input id="co-avoid" type="text">
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn ghost" data-back="v-profile">Back</button>
+    <button class="btn primary" id="btn-match">Find my matches</button>
+  </div>
+  <p class="err" id="err-prefs" role="alert"></p>
+</section>
+
+<!-- ============ LOADING ============ -->
+<section class="view" id="v-loading" data-step="3" hidden aria-live="polite">
+  <div class="scan">
+    <div class="scan-doc" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><b></b></div>
+    <ol class="scan-steps" id="scan-steps"></ol>
+  </div>
+</section>
+
+<!-- ============ 3. RESULTS ============ -->
+<section class="view wide" id="v-results" data-step="3" hidden>
+  <h2 class="title" id="res-title"></h2>
+  <p class="lede" id="res-lede"></p>
+  <p class="note" id="res-notes"></p>
+
+  <div class="flags">
+    <div class="flag-col g"><h3><span class="dot"></span>On track</h3><p>Skills you've used that these jobs want</p><ul id="fl-green"></ul></div>
+    <div class="flag-col w"><h3><span class="dot"></span>Could be stronger</h3><p>Listed but not proven, or nice to have</p><ul id="fl-white"></ul></div>
+    <div class="flag-col r"><h3><span class="dot"></span>Missing</h3><p>Required by your matched jobs</p><ul id="fl-red"></ul></div>
+  </div>
+
+  <p class="salary" id="salary"></p>
+
+  <h3 class="sub">Your best matches</h3>
+  <div class="tabs" id="field-tabs" role="tablist" aria-label="Filter matches by field"></div>
+  <ol class="jobs" id="jobs"></ol>
+  <p class="credit" id="credit" hidden><a href="https://www.adzuna.co.uk" target="_blank" rel="noopener">Jobs by Adzuna</a></p>
+
+  <div class="actions">
+    <button class="btn ghost" data-back="v-prefs">Change what I want</button>
+    <button class="btn primary" id="btn-to-choice">Decide: go or grow</button>
+  </div>
+</section>
+
+<!-- ============ 4. GO / GROW ============ -->
+<section class="view full" id="v-choice" data-step="4" hidden>
+  <div class="split" id="split">
+    <button class="half go" id="pick-go">
+      <svg class="go-track" viewBox="0 0 600 200" preserveAspectRatio="none" aria-hidden="true"><path id="track" d="M0 150 C 180 150, 260 60, 600 40"/></svg>
+      <span class="sugg" hidden>Suggested for you</span>
+      <span class="big">Go</span>
+      <span class="what">I'm ready. Prepare applications for the jobs I pick, using what I've really done.</span>
+      <span class="count" id="go-count"></span>
+    </button>
+    <button class="half grow" id="pick-grow">
+      <svg class="sprout" viewBox="0 0 200 300" aria-hidden="true">
+        <path class="stem" id="stem" d="M100 300 C 100 230, 96 190, 100 120"/>
+        <path class="leaf l1" d="M100 200 C 70 190, 55 165, 60 150 C 85 155, 98 175, 100 200Z"/>
+        <path class="leaf l2" d="M100 165 C 130 155, 148 130, 142 115 C 118 122, 102 140, 100 165Z"/>
+        <path class="leaf l3" d="M100 125 C 82 105, 84 82, 95 72 C 110 88, 108 108, 100 125Z"/>
+      </svg>
+      <span class="sugg" hidden>Suggested for you</span>
+      <span class="big">Grow</span>
+      <span class="what">I'll build the missing skills first, then come back and check again.</span>
+      <span class="count" id="grow-count"></span>
+    </button>
+  </div>
+  <button class="btn ghost back-float" data-back="v-results">Back to my matches</button>
+</section>
+
+<!-- ============ GO ============ -->
+<section class="view wide" id="v-go" data-step="4" hidden>
+  <h2 class="title">Pick the jobs to apply for</h2>
+  <p class="lede">We'll write a tailored summary, resume points and cover note for each one. Nothing is sent. You review it and apply yourself.</p>
+  <ul class="pick" id="go-options"></ul>
+  <div class="actions">
+    <button class="btn ghost" data-back="v-choice">Back</button>
+    <button class="btn go-btn" id="btn-prepare" disabled>Prepare applications</button>
+  </div>
+  <p class="err" id="err-go" role="alert"></p>
+  <div id="apps"></div>
+</section>
+
+<!-- ============ GROW ============ -->
+<section class="view" id="v-grow" data-step="4" hidden>
+  <h2 class="title" id="grow-title">Your learning plan</h2>
+  <p class="lede" id="grow-lede"></p>
+  <ol class="plan" id="plan"></ol>
+  <ul class="tips" id="tips" hidden></ul>
+
+  <div class="recheck">
+    <h3 class="sub">Finished something?</h3>
+    <p class="hint">Upload your updated resume or add a project link, and we'll check again.</p>
+    <div class="add-row">
+      <input type="file" id="re-files" multiple accept=".pdf,.docx,.png,.jpg,.jpeg,.txt">
+    </div>
+    <div class="add-row"><input id="re-links" type="text" placeholder="Link to your new project"></div>
+    <button class="btn grow-btn" id="btn-recheck">Check again</button>
+    <div id="recheck-out" aria-live="polite"></div>
+  </div>
+  <div class="actions"><button class="btn ghost" data-back="v-choice">Back</button></div>
+</section>
+
+</main>
+<script src="/static/vendor/gsap.min.js"></script>
+<script src="/static/vendor/SplitText.min.js"></script>
+<script src="/static/vendor/ScrollTrigger.min.js"></script>
+<script src="/static/vendor/DrawSVGPlugin.min.js"></script>
+<script src="/static/vendor/CustomEase.min.js"></script>
+<script src="/static/vendor/MotionPathPlugin.min.js"></script>
+<script src="/static/motion.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>

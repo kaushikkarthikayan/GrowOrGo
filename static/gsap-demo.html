@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GoOrGrow - motion preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/app.css">
+<script>document.documentElement.classList.add("gsap-on")</script>
+<style>
+  /* Preview-only layout: four scenes stacked, each with a replay button. */
+  .scene { max-width: 1040px; margin: 0 auto 28px; background: var(--paper); border-radius: var(--r-lg); padding: clamp(24px, 4vw, 48px); position: relative; overflow: hidden; }
+  .scene-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 20px; }
+  .scene-head h2 { font: 600 15px var(--body); color: var(--pine-2); margin: 0; }
+  .replay { font: 700 14px var(--body); border: 1.5px solid var(--line); background: var(--paper); border-radius: 999px; padding: 8px 16px; cursor: pointer; color: var(--pine); }
+  .replay:hover { border-color: var(--pine); }
+  .intro { max-width: 1040px; margin: 0 auto 28px; }
+  .intro p { color: var(--pine-2); max-width: 62ch; }
+
+  /* 1. hero */
+  .demo-hero { font: 800 clamp(48px, 9vw, 104px)/0.92 var(--display); letter-spacing: -0.045em; margin: 0; }
+  .demo-hero .char { display: inline-block; will-change: transform; }
+  .demo-lede { font-size: 19px; color: var(--pine-2); max-width: 54ch; margin: 18px 0 0; }
+  .ink { display: block; width: 260px; height: 14px; margin-top: 10px; }
+  .ink path { fill: none; stroke: var(--go); stroke-width: 5; stroke-linecap: round; }
+
+  /* 2. loading */
+  .demo-scan { display: grid; grid-template-columns: 160px 1fr; gap: 40px; align-items: center; }
+  .demo-scan .scan-doc b { animation: none; }
+  .demo-scan .scan-steps li { opacity: .3; }
+
+  /* 3. results */
+  .demo-flags { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .demo-flags .flag-col li { will-change: transform; }
+  .demo-job { display: grid; grid-template-columns: 1fr 220px; gap: 24px; padding: 18px 0; border-top: 1px solid var(--line); }
+  .demo-job h4 { font: 600 20px var(--display); margin: 0 0 4px; }
+  .demo-job p { margin: 0; color: var(--pine-2); font-size: 15px; }
+  .num { font: 800 34px/1 var(--display); }
+  .demo-job .bar { height: 8px; background: #E1EAE5; border-radius: 4px; overflow: hidden; margin-top: 8px; }
+  .demo-job .bar i { display: block; height: 100%; width: 0; background: var(--pine); border-radius: 4px; }
+
+  /* 4. go / grow */
+  .scene.choice { padding: 0; }
+  .scene.choice .scene-head { position: absolute; top: 16px; left: 24px; right: 24px; z-index: 3; }
+  .scene.choice .scene-head h2 { color: #fff; }
+  .demo-split { display: grid; grid-template-columns: 1fr 1fr; height: 560px; }
+  .demo-split .half { min-height: 0; }
+  .demo-split .half .big { white-space: nowrap; font-size: clamp(72px, 11vw, 170px); }
+  .demo-split .half .big .char { display: inline-block; }
+  .demo-split .half { min-width: 0; }
+  .demo-split .half.grow .sprout .stem { animation: none; stroke-dasharray: none; stroke-dashoffset: 0; }
+  .demo-split .half.grow .sprout .leaf { animation: none; }
+  .demo-split .half:hover .big { transform: none; }
+  .demo-split:hover .half:not(:hover) { filter: none; }
+  .spark { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: #fff; pointer-events: none; }
+  .hint-pill { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 3; background: var(--paper); color: var(--pine); font-size: 14px; padding: 8px 16px; border-radius: 999px; }
+
+  @media (max-width: 760px) {
+    .demo-flags, .demo-scan { grid-template-columns: 1fr; }
+    .demo-job { grid-template-columns: 1fr; }
+    .demo-split { grid-template-columns: 1fr; height: 720px; }
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="/"><span class="b-go">Go</span><span class="b-or">or</span><span class="b-grow">Grow</span></a>
+  <span class="mode">Motion preview, not the live site</span>
+</header>
+
+<main>
+  <div class="intro">
+    <h1 class="title">How the site would move with GSAP</h1>
+    <p>Four moments from GoOrGrow with the new motion. Each one has a Replay button. Click Go or Grow at the bottom to see the choice animations.</p>
+  </div>
+
+  <!-- 1 -->
+  <section class="scene" id="s1">
+    <div class="scene-head"><h2>Opening screen: the headline builds letter by letter</h2><button class="replay" data-play="hero">Replay</button></div>
+    <h1 class="demo-hero" id="hero">Apply now,<br>or grow first?</h1>
+    <svg class="ink" viewBox="0 0 260 14" aria-hidden="true"><path id="ink" d="M3 9 C 60 3, 120 13, 180 6 S 240 8, 257 5"/></svg>
+    <p class="demo-lede" id="lede">Upload your resume and we'll compare it with real job ads. You get a straight answer for each role, backed by lines from your own CV.</p>
+  </section>
+
+  <!-- 2 -->
+  <section class="scene" id="s2">
+    <div class="scene-head"><h2>While we analyse: the scan follows each real step</h2><button class="replay" data-play="scan">Replay</button></div>
+    <div class="demo-scan">
+      <div class="scan-doc" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><b id="beam"></b></div>
+      <ol class="scan-steps" id="steps">
+        <li>Reading your confirmed profile</li>
+        <li>Collecting job listings</li>
+        <li>Pulling out what each job asks for</li>
+        <li>Filtering by field, place, level and salary</li>
+        <li>Comparing your skills with every requirement</li>
+        <li>Ranking your best matches</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="scene" id="s3">
+    <div class="scene-head"><h2>Your matches: flags drop in, scores count up</h2><button class="replay" data-play="results">Replay</button></div>
+    <div class="demo-flags">
+      <div class="flag-col g"><h3><span class="dot"></span>On track</h3><p>Skills you've used that these jobs want</p>
+        <ul><li>SQL<span>wanted by 5 of 5 jobs</span></li><li>Power BI<span>wanted by 4 of 5 jobs</span></li><li>Python<span>wanted by 3 of 5 jobs</span></li></ul></div>
+      <div class="flag-col w"><h3><span class="dot"></span>Could be stronger</h3><p>Listed but not proven, or nice to have</p>
+        <ul><li>Tableau<span>listed, but not shown in a project or job</span></li><li>Statistics<span>nice to have</span></li></ul></div>
+      <div class="flag-col r"><h3><span class="dot"></span>Missing</h3><p>Required by your matched jobs</p>
+        <ul><li>Data Warehousing<span>required by 2 of 5 jobs</span></li><li>ETL<span>required by 1 of 5 jobs</span></li></ul></div>
+    </div>
+    <div style="margin-top:24px">
+      <div class="demo-job"><div><h4>Junior Data Analyst</h4><p>Northwind Analytics (demo), London</p></div><div><span class="num" data-to="88">0</span>/100<div class="bar"><i data-to="88"></i></div></div></div>
+      <div class="demo-job"><div><h4>Business Intelligence Analyst</h4><p>Crestline Finance (demo), London</p></div><div><span class="num" data-to="72">0</span>/100<div class="bar"><i data-to="72"></i></div></div></div>
+      <div class="demo-job"><div><h4>Graduate Business Analyst</h4><p>Westbrook Consulting (demo), London</p></div><div><span class="num" data-to="59">0</span>/100<div class="bar"><i data-to="59"></i></div></div></div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="scene choice" id="s4">
+    <div class="scene-head"><h2>The big moment: click Go or Grow</h2><button class="replay" data-play="choice">Reset</button></div>
+    <div class="demo-split" id="split">
+      <button class="half go" id="go">
+        <svg class="go-track" viewBox="0 0 600 200" preserveAspectRatio="none" aria-hidden="true"><path id="track" d="M0 150 C 180 150, 260 60, 600 40"/></svg>
+        <span class="big" id="go-word">Go</span>
+        <span class="what">I'm ready. Prepare applications for the jobs I pick, using what I've really done.</span>
+      </button>
+      <button class="half grow" id="grow">
+        <svg class="sprout" viewBox="0 0 200 300" aria-hidden="true">
+          <path class="stem" id="stem" d="M100 300 C 100 230, 96 190, 100 120"/>
+          <path class="leaf l1" d="M100 200 C 70 190, 55 165, 60 150 C 85 155, 98 175, 100 200Z"/>
+          <path class="leaf l2" d="M100 165 C 130 155, 148 130, 142 115 C 118 122, 102 140, 100 165Z"/>
+          <path class="leaf l3" d="M100 125 C 82 105, 84 82, 95 72 C 110 88, 108 108, 100 125Z"/>
+        </svg>
+        <span class="big" id="grow-word">Grow</span>
+        <span class="what">I'll build the missing skills first, then come back and check again.</span>
+      </button>
+    </div>
+    <span class="hint-pill" id="pill">Hover each side, then click one</span>
+  </section>
+</main>
+
+<script src="/static/vendor/gsap.min.js"></script>
+<script src="/static/vendor/SplitText.min.js"></script>
+<script src="/static/vendor/ScrollTrigger.min.js"></script>
+<script src="/static/vendor/DrawSVGPlugin.min.js"></script>
+<script src="/static/vendor/CustomEase.min.js"></script>
+<script>
+gsap.registerPlugin(SplitText, ScrollTrigger, DrawSVGPlugin, CustomEase);
+CustomEase.create("launch", "M0,0 C0.2,0 0.3,-0.12 0.45,-0.08 0.62,-0.03 0.7,1 1,1");
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const plays = {};
+
+/* 1. hero: letters rise with a slight overshoot, then the ink line draws under it */
+const heroSplit = SplitText.create("#hero", { type: "chars,words", charsClass: "char" });
+plays.hero = () => gsap.timeline()
+  .from(heroSplit.chars, { yPercent: 110, rotate: 8, opacity: 0, duration: 0.7, ease: "back.out(1.6)", stagger: 0.025 })
+  .from("#ink", { drawSVG: 0, duration: 0.6, ease: "power2.inOut" }, "-=0.3")
+  .from("#lede", { y: 16, opacity: 0, duration: 0.5, ease: "power2.out" }, "-=0.35");
+
+/* 2. scan: the beam sweeps once per step, and each step ticks as the beam finishes */
+plays.scan = () => {
+  const items = gsap.utils.toArray("#steps li");
+  items.forEach((li) => li.classList.remove("done", "now"));
+  gsap.set(items, { opacity: 0.3 });
+  const tl = gsap.timeline();
+  items.forEach((li) => {
+    tl.call(() => li.classList.add("now"))
+      .to(li, { opacity: 1, x: 6, duration: 0.2 })
+      .fromTo("#beam", { top: "0%" }, { top: "100%", duration: 0.55, ease: "sine.inOut" }, "<")
+      .call(() => { li.classList.remove("now"); li.classList.add("done"); })
+      .to(li, { x: 0, duration: 0.2 });
+  });
+  return tl;
+};
+
+/* 3. results: flag items drop in column by column, scores count up as bars fill */
+plays.results = () => {
+  const tl = gsap.timeline();
+  tl.from(".demo-flags .flag-col", { y: 30, opacity: 0, duration: 0.5, stagger: 0.12, ease: "power3.out" })
+    .from(".demo-flags li", { y: -14, opacity: 0, duration: 0.35, stagger: 0.06, ease: "back.out(2)" }, "-=0.2");
+  gsap.utils.toArray(".demo-job").forEach((row, i) => {
+    const n = row.querySelector(".num"), bar = row.querySelector(".bar i"), to = +n.dataset.to, obj = { v: 0 };
+    tl.from(row, { x: -24, opacity: 0, duration: 0.4, ease: "power2.out" }, i ? "-=0.25" : "-=0.1")
+      .to(obj, { v: to, duration: 0.9, ease: "power2.out", onUpdate: () => (n.textContent = Math.round(obj.v)) }, "<")
+      .fromTo(bar, { width: 0 }, { width: to + "%", duration: 0.9, ease: "power2.out" }, "<");
+  });
+  return tl;
+};
+
+/* 4. go / grow */
+const goSplit = SplitText.create("#go-word", { type: "chars", charsClass: "char" });
+const growSplit = SplitText.create("#grow-word", { type: "chars", charsClass: "char" });
+const split = document.getElementById("split");
+let chosen = false;
+
+// Hover: the hovered side leans in and its word lifts; the other side calms down.
+["go", "grow"].forEach((side) => {
+  const el = document.getElementById(side), other = document.getElementById(side === "go" ? "grow" : "go");
+  const chars = side === "go" ? goSplit.chars : growSplit.chars;
+  el.addEventListener("mouseenter", () => {
+    if (chosen || reduce) return;
+    gsap.to(split, { gridTemplateColumns: side === "go" ? "1.15fr 0.85fr" : "0.85fr 1.15fr", duration: 0.6, ease: "power3.out" });
+    gsap.to(chars, { y: -12, duration: 0.4, stagger: 0.04, ease: "back.out(3)" });
+    gsap.to(other, { filter: "saturate(0.55) brightness(0.92)", duration: 0.4 });
+  });
+  el.addEventListener("mouseleave", () => {
+    if (chosen || reduce) return;
+    gsap.to(split, { gridTemplateColumns: "1fr 1fr", duration: 0.6, ease: "power3.out" });
+    gsap.to(chars, { y: 0, duration: 0.4, stagger: 0.03, ease: "power2.out" });
+    gsap.to(other, { filter: "none", duration: 0.4 });
+  });
+});
+
+// Idle loop on the Go track so the screen feels alive before anyone hovers.
+gsap.set("#track", { strokeDasharray: "10 14" });
+const trackLoop = gsap.to("#track", { strokeDashoffset: -48, duration: 1, ease: "none", repeat: -1 });
+
+function sparks(from, color, count, dir) {
+  const box = split.getBoundingClientRect(), r = from.getBoundingClientRect();
+  for (let i = 0; i < count; i++) {
+    const s = document.createElement("span");
+    s.className = "spark"; s.style.background = color;
+    s.style.left = r.left - box.left + r.width * Math.random() + "px";
+    s.style.top = r.top - box.top + r.height * Math.random() + "px";
+    split.appendChild(s);
+    gsap.to(s, { x: dir === "right" ? gsap.utils.random(120, 400) : gsap.utils.random(-80, 80),
+      y: dir === "right" ? gsap.utils.random(-60, 60) : gsap.utils.random(-260, -80),
+      opacity: 0, scale: gsap.utils.random(0.4, 1.4), duration: gsap.utils.random(0.6, 1.1), ease: "power2.out",
+      onComplete: () => s.remove() });
+  }
+}
+
+function chooseGo() {
+  if (chosen) return; chosen = true;
+  gsap.to("#pill", { opacity: 0, duration: 0.2 });
+  gsap.timeline()
+    .to(split, { gridTemplateColumns: "1fr 0fr", duration: 0.7, ease: "power4.inOut" })
+    .to("#grow", { opacity: 0, padding: 0, duration: 0.3 }, "<")
+    .to(goSplit.chars, { x: -18, duration: 0.25, ease: "power2.in", stagger: 0.03 }, "-=0.2")       // wind up
+    .call(() => sparks(document.getElementById("go-word"), "#fff", 26, "right"))
+    .to(goSplit.chars, { x: "120vw", skewX: -18, duration: 0.7, ease: "power4.in", stagger: 0.06 })  // launch
+    .fromTo("#track", { drawSVG: "0%" }, { drawSVG: "100%", duration: 0.6, ease: "power2.out" }, "<")
+    .to("#go .what", { y: -10, opacity: 0, duration: 0.3 }, "<0.2");
+}
+
+function chooseGrow() {
+  if (chosen) return; chosen = true;
+  gsap.to("#pill", { opacity: 0, duration: 0.2 });
+  gsap.set(".sprout .leaf", { transformOrigin: "50% 100%", scale: 0 });
+  gsap.timeline()
+    .to(split, { gridTemplateColumns: "0fr 1fr", duration: 0.7, ease: "power4.inOut" })
+    .to("#go", { opacity: 0, padding: 0, duration: 0.3 }, "<")
+    .fromTo("#stem", { drawSVG: "0%" }, { drawSVG: "100%", duration: 0.9, ease: "power2.out" })        // stem grows
+    .fromTo(".sprout .leaf", { scale: 0 }, { scale: 1, duration: 0.7, ease: "elastic.out(1, 0.45)", stagger: 0.18 }, "-=0.35")
+    .to(".sprout", { scale: 1.35, y: -20, duration: 0.8, ease: "power2.inOut" }, "-=0.4")
+    .from(growSplit.chars, { y: 40, duration: 0.6, ease: "back.out(3)", stagger: 0.06 }, "<")       // word sprouts up
+    .call(() => sparks(document.querySelector(".sprout"), "#D9F2C9", 18, "up"), null, "<0.2");
+}
+
+document.getElementById("go").addEventListener("click", chooseGo);
+document.getElementById("grow").addEventListener("click", chooseGrow);
+
+plays.choice = () => {
+  chosen = false;
+  gsap.killTweensOf([split, "#go", "#grow", goSplit.chars, growSplit.chars, ".sprout", ".sprout .leaf", "#stem", "#go .what", "#pill"]);
+  gsap.set(split, { gridTemplateColumns: "1fr 1fr" });
+  gsap.set(["#go", "#grow", "#pill", "#go .what"], { clearProps: "all" });
+  gsap.set([goSplit.chars, growSplit.chars, ".sprout", ".sprout .leaf", "#stem", "#track"], { clearProps: "transform,opacity,strokeDashoffset,strokeDasharray" });
+  gsap.set("#track", { strokeDasharray: "10 14" });
+  trackLoop.restart();
+};
+
+// Replay buttons
+document.querySelectorAll("[data-play]").forEach((b) => b.addEventListener("click", () => plays[b.dataset.play]()));
+
+// Play each scene the first time it scrolls into view.
+if (!reduce) {
+  plays.hero();
+  ScrollTrigger.create({ trigger: "#s2", start: "top 75%", once: true, onEnter: plays.scan });
+  ScrollTrigger.create({ trigger: "#s3", start: "top 75%", once: true, onEnter: plays.results });
+  gsap.from("#s4", { scrollTrigger: { trigger: "#s4", start: "top 85%" }, y: 60, opacity: 0, duration: 0.8, ease: "power3.out" });
+} else {
+  document.querySelectorAll(".num").forEach((n) => (n.textContent = n.dataset.to));
+  document.querySelectorAll(".bar i").forEach((b) => (b.style.width = b.dataset.to + "%"));
+  document.querySelectorAll("#steps li").forEach((li) => li.classList.add("done"));
+}
+</script>
+</body>
+</html>

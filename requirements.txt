@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+python-multipart
+pydantic
+python-dotenv
+pdfplumber
+pymupdf
+python-docx
+pytesseract
+pillow
+httpx
+beautifulsoup4
+sentence-transformers
+rapidfuzz
