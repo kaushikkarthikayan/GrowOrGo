@@ -14,6 +14,8 @@ git clone https://github.com/kaushikkarthikayan/GrowOrGo.git
 cd GrowOrGo
 ```
 
+📄 A full illustrated project guide is in [`docs/GoOrGrow_Project_Guide.docx`](docs/GoOrGrow_Project_Guide.docx) (Word).
+
 ---
 
 ## 1. Setup (Windows, first time only)
